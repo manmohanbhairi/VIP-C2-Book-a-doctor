@@ -1,48 +1,86 @@
-import { useParams } from "react-router-dom";
 import { useState } from "react";
+import { useParams } from "react-router-dom";
 import API from "../services/api";
 
-function BookAppointment() {
-  const { doctorId } = useParams(); // ✅ FIRST
 
-  const [form, setForm] = useState({
-    patientId: "",
-    doctorId: doctorId, // ✅ NOW SAFE
-    appointmentDate: "",
-  });
+function BookAppointment(){
 
-  const handleSubmit = async (e) => {
+  const { doctorId } = useParams();
+
+  const user = JSON.parse(
+    localStorage.getItem("user")
+  );
+
+
+  const [date,setDate] = useState("");
+
+
+  const handleSubmit = async(e)=>{
+
     e.preventDefault();
 
-    try {
-      const res = await API.post("/appointments", form);
-      alert(res.data.message);
-    } catch (error) {
-      alert("Booking Failed");
+
+    try{
+
+      await API.post(
+        "/appointments",
+        {
+          patientId:user._id,
+          doctorId:doctorId,
+          appointmentDate:date
+        }
+      );
+
+
+      alert("Appointment booked successfully");
+
+
     }
+    catch(error){
+
+      console.log(error.response);
+
+      alert(
+        error.response?.data?.message ||
+        "Booking Failed"
+      );
+
+    }
+
   };
 
-  return (
+
+  return(
+
     <div>
+
       <h1>Book Appointment</h1>
 
+
       <form onSubmit={handleSubmit}>
+
+
         <input
           type="date"
-          onChange={(e) =>
-            setForm({
-              ...form,
-              appointmentDate: e.target.value,
-            })
+          onChange={
+            (e)=>setDate(e.target.value)
           }
         />
 
-        <button type="submit">
+
+        <button>
           Book
         </button>
+
+
       </form>
+
+
     </div>
+
   );
+
 }
+
 
 export default BookAppointment;
