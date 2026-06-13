@@ -7,9 +7,11 @@ function BookAppointment(){
 
   const { doctorId } = useParams();
 
-  const user = JSON.parse(
-    localStorage.getItem("user")
-  );
+const user = JSON.parse(
+  localStorage.getItem("user")
+);
+
+const patientId = user?._id || user?.id;
 
 
   const [date,setDate] = useState("");
@@ -23,13 +25,13 @@ function BookAppointment(){
     try{
 
       await API.post(
-        "/appointments",
-        {
-          patientId:user._id,
-          doctorId:doctorId,
-          appointmentDate:date
-        }
-      );
+"/appointments",
+{
+ patientId: patientId,
+ doctorId: doctorId,
+ appointmentDate: date
+}
+);
 
 
       alert("Appointment booked successfully");
