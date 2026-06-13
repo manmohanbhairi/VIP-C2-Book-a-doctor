@@ -1,109 +1,176 @@
 const Appointment = require("../models/Appointment");
 
 
-// Create Appointment
-exports.createAppointment = async (req, res) => {
+// Book appointment
+exports.bookAppointment = async (req,res)=>{
 
-  try {
+try{
 
-    const {
-      patientId,
-      doctorId,
-      appointmentDate
-    } = req.body;
-
-
-    if (!patientId || !doctorId || !appointmentDate) {
-      return res.status(400).json({
-        message: "Missing appointment details"
-      });
-    }
+const {
+ patientId,
+ doctorId,
+ appointmentDate
+}=req.body;
 
 
-    const appointment = await Appointment.create({
-      patientId,
-      doctorId,
-      appointmentDate,
-      status: "Booked"
-    });
+const appointment =
+await Appointment.create({
+
+patientId,
+doctorId,
+appointmentDate,
+status:"Pending"
+
+});
 
 
-    res.status(201).json({
-      message: "Appointment booked successfully",
-      appointment
-    });
+res.status(201).json({
+
+message:"Appointment booked successfully",
+
+appointment
+
+});
 
 
-  } catch (error) {
+}
+catch(error){
 
-    console.log(error);
+console.log(error);
 
-    res.status(500).json({
-      message: error.message
-    });
+res.status(500).json({
 
-  }
+message:error.message
+
+});
+
+}
 
 };
 
 
 
 // Get appointments
-exports.getAppointments = async (req,res)=>{
 
-  try {
+exports.getAppointments = async(req,res)=>{
 
-    const appointments =
-      await Appointment.find()
-      .populate("patientId")
-      .populate("doctorId");
+try{
 
 
-    res.json(appointments);
+const appointments =
+await Appointment.find()
+.populate("patientId")
+.populate("doctorId");
 
 
-  } catch(error){
+res.json(appointments);
 
-    res.status(500).json({
-      message:error.message
-    });
 
-  }
+}
+catch(error){
+
+res.status(500).json({
+
+message:error.message
+
+});
+
+}
 
 };
 
 
 
 // Cancel appointment
-exports.cancelAppointment = async(req,res)=>{
 
- try{
+exports.cancelAppointment =
+async(req,res)=>{
 
-   const appointment =
-   await Appointment.findByIdAndUpdate(
-     req.params.id,
-     {
-       status:"Cancelled"
-     },
-     {
-       new:true
-     }
-   );
+try{
 
 
-   res.json({
-     message:"Appointment cancelled",
-     appointment
-   });
+const appointment =
+await Appointment.findByIdAndUpdate(
+
+req.params.id,
+
+{
+status:"Cancelled"
+},
+
+{
+new:true
+}
+
+);
 
 
- }
- catch(error){
+res.json({
 
-   res.status(500).json({
-     message:error.message
-   });
+message:"Appointment cancelled",
 
- }
+appointment
+
+});
+
+
+}
+catch(error){
+
+res.status(500).json({
+
+message:error.message
+
+});
+
+}
+
+};
+
+
+
+// Approve appointment
+
+exports.approveAppointment =
+async(req,res)=>{
+
+try{
+
+
+const appointment =
+await Appointment.findByIdAndUpdate(
+
+req.params.id,
+
+{
+status:"Approved"
+},
+
+{
+new:true
+}
+
+);
+
+
+res.json({
+
+message:"Appointment approved",
+
+appointment
+
+});
+
+
+}
+catch(error){
+
+res.status(500).json({
+
+message:error.message
+
+});
+
+}
 
 };
