@@ -1,19 +1,182 @@
-const express = require("express");
-const router = express.Router();
+const Appointment = require("../models/Appointment");
 
-const {
-  bookAppointment,
-  getAppointments,
-  cancelAppointment,
-  approveAppointment
-} = require("../controllers/appointmentController");
 
-router.post("/", bookAppointment);
-router.get("/", getAppointments);
-router.put("/cancel/:id", cancelAppointment);
-router.put(
-  "/approve/:id",
-  approveAppointment
+// Book Appointment
+exports.bookAppointment = async (req, res) => {
+
+  try {
+
+    const {
+      patientId,
+      doctorId,
+      appointmentDate
+    } = req.body;
+
+
+    if (!patientId || !doctorId || !appointmentDate) {
+
+      return res.status(400).json({
+        message: "Missing appointment details"
+      });
+
+    }
+
+
+    const appointment =
+      await Appointment.create({
+
+        patientId,
+        doctorId,
+        appointmentDate,
+        status: "Pending"
+
+      });
+
+
+    res.status(201).json({
+
+      message: "Appointment booked successfully",
+
+      appointment
+
+    });
+
+
+  } catch(error) {
+
+    console.log(error);
+
+    res.status(500).json({
+
+      message:error.message
+
+    });
+
+  }
+
+};
+
+
+
+
+// Get appointments
+exports.getAppointments = async(req,res)=>{
+
+ try{
+
+
+ const appointments =
+ await Appointment.find()
+ .populate("patientId")
+ .populate("doctorId");
+
+
+ res.json(appointments);
+
+
+ }
+ catch(error){
+
+ res.status(500).json({
+  message:error.message
+ });
+
+ }
+
+};
+
+
+
+
+// Cancel appointment
+exports.cancelAppointment = async(req,res)=>{
+
+try{
+
+
+const appointment =
+await Appointment.findByIdAndUpdate(
+
+req.params.id,
+
+{
+ status:"Cancelled"
+},
+
+{
+ new:true
+}
+
 );
 
-module.exports = router;
+
+res.json({
+
+message:"Appointment cancelled",
+
+appointment
+
+});
+
+
+}
+catch(error){
+
+res.status(500).json({
+
+message:error.message
+
+});
+
+}
+
+};
+
+
+
+
+// Approve appointment
+exports.approveAppointment = async(req,res)=>{
+
+
+try{
+
+
+const appointment =
+await Appointment.findByIdAndUpdate(
+
+req.params.id,
+
+{
+ status:"Approved"
+},
+
+{
+ new:true
+}
+
+);
+
+
+res.json({
+
+message:"Appointment approved",
+
+appointment
+
+});
+
+
+}
+catch(error){
+
+res.status(500).json({
+
+message:error.message
+
+});
+
+}
+
+
+};
