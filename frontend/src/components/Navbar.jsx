@@ -1,60 +1,89 @@
 import { Link } from "react-router-dom";
 
 function Navbar() {
-    const handleLogout = () => {
-  localStorage.removeItem("token");
-  localStorage.removeItem("user");
 
-  window.location.href = "/";
-};
+  const user = JSON.parse(
+    localStorage.getItem("user")
+  );
+
+
+  const logout = () => {
+
+    localStorage.clear();
+
+    window.location.href="/";
+
+  };
+
+
   return (
-    <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
-      <div className="container">
 
-        <Link className="navbar-brand" to="/">
-          Book A Doctor
+    <nav className="navbar navbar-dark bg-dark px-4">
+
+      <Link
+        className="navbar-brand"
+        to="/dashboard"
+      >
+        Book A Doctor
+      </Link>
+
+
+      <div>
+
+
+        <Link
+          className="btn btn-light me-2"
+          to="/doctors"
+        >
+          Doctors
         </Link>
 
-        <div className="navbar-nav">
+
+
+        <Link
+          className="btn btn-light me-2"
+          to="/appointments"
+        >
+          Appointments
+        </Link>
+
+
+
+        {
+          user?.role === "admin" &&
 
           <Link
-            className="nav-link"
-            to="/doctors"
+            className="btn btn-warning me-2"
+            to="/admin"
           >
-            Doctors
+            Admin
           </Link>
 
-          <Link
-            className="nav-link"
-            to="/appointments"
-          >
-            Appointments
-          </Link>
+        }
 
-          <Link
-            className="nav-link"
-            to="/register"
-          >
-            Register
-          </Link>
 
-          <Link
-            className="nav-link"
-            to="/"
-          >
-            Login
-          </Link>
 
-        </div>
+        {
+          user &&
+
+          <button
+            className="btn btn-danger"
+            onClick={logout}
+          >
+            Logout
+          </button>
+
+        }
+
+
       </div>
-      <button
-  className="btn btn-danger ms-3"
-  onClick={handleLogout}
->
-  Logout
-</button>
+
+
     </nav>
+
   );
+
 }
+
 
 export default Navbar;

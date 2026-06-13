@@ -13,6 +13,7 @@ import Admin from "./pages/Admin";
 import AddDoctor from "./pages/AddDoctor";
 import AdminDoctors from "./pages/AdminDoctors";
 import AdminAppointments from "./pages/AdminAppointments";
+import AdminRoute from "./components/AdminRoute";
 
 function App() {
   return (
@@ -62,37 +63,43 @@ function App() {
   element={<DoctorDetails />}
 />
 <Route
-  path="/admin"
-  element={
-    <ProtectedRoute>
-      <Admin />
-    </ProtectedRoute>
-  }
+path="/admin"
+element={
+<AdminRoute>
+<Admin/>
+</AdminRoute>
+}
 />
 <Route
   path="/admin/add-doctor"
   element={
-    <ProtectedRoute>
+    <AdminRoute>
       <AddDoctor />
-    </ProtectedRoute>
+    </AdminRoute>
   }
 />
 
 <Route
   path="/admin/doctors"
   element={
-    <ProtectedRoute>
+    <AdminRoute>
+
       <AdminDoctors />
-    </ProtectedRoute>
+    
+    </AdminRoute>
+    
   }
 />
 
 <Route
   path="/admin/appointments"
   element={
-    <ProtectedRoute>
+    <AdminRoute>
+
       <AdminAppointments />
-    </ProtectedRoute>
+    
+    </AdminRoute>
+    
   }
 />
       </Routes>

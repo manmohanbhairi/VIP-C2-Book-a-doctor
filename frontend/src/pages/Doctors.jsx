@@ -1,78 +1,137 @@
 import { useEffect, useState } from "react";
-import API from "../services/api";
-import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
+import API from "../services/api";
 
-function Doctors() {
-  const [doctors, setDoctors] = useState([]);
 
-  useEffect(() => {
-    const fetchDoctors = async () => {
-      try {
-        const res = await API.get("/doctors");
-        setDoctors(res.data);
-      } catch (error) {
-        console.log(error);
-      }
-    };
+function Doctors(){
 
-    fetchDoctors();
-  }, []);
+const [doctors,setDoctors]=useState([]);
 
-  const navigate = useNavigate();
-  return (
-  <div className="container mt-4">
-    <h1 className="mb-4">
-      Doctors List
-    </h1>
+const [loading,setLoading]=useState(true);
 
-    <div className="row">
-      {doctors.map((doctor) => (
-        <div
-          className="col-md-4"
-          key={doctor._id}
-        >
-          <div className="card mb-3">
+const [error,setError]=useState("");
 
-            <div className="card-body">
 
-              <h4>{doctor.name}</h4>
+useEffect(()=>{
 
-              <p>
-                {doctor.specialization}
-              </p>
+API.get("/doctors")
 
-              <p>
-                {doctor.experience} Years
-              </p>
+.then(res=>{
 
-              <p>
-                ₹{doctor.fees}
-              </p>
+setDoctors(res.data);
 
-              <button
-                className="btn btn-primary"
-                onClick={() =>
-                  navigate(
-                    `/book/${doctor._id}`
-                  )
-                }
-              >
-                Book Appointment
-              </button>
-              <Link
-  className="btn btn-secondary ms-2"
-  to={`/doctors/${doctor._id}`}
+setLoading(false);
+
+})
+
+.catch(err=>{
+
+console.log(err);
+
+setError("Failed to load doctors");
+
+setLoading(false);
+
+});
+
+
+},[]);
+
+
+
+return(
+
+<div className="container mt-4">
+
+
+<h1 className="mb-4">
+Available Doctors
+</h1>
+
+{
+loading &&
+<h3>
+Loading doctors...
+</h3>
+}
+
+
+{
+error &&
+<h3 className="text-danger">
+{error}
+</h3>
+}
+<div className="row">
+
+
+{
+doctors.map((doctor)=>(
+
+<div
+className="col-md-4 mb-4"
+key={doctor._id}
 >
-  View Details
+
+
+<div className="card shadow p-3">
+
+
+<h3>
+{doctor.name}
+</h3>
+
+
+<p>
+Specialization:
+<br/>
+<b>{doctor.specialization}</b>
+</p>
+
+
+<p>
+Experience:
+<br/>
+<b>{doctor.experience} years</b>
+</p>
+
+
+
+<Link
+
+className="btn btn-primary"
+
+to={`/book/${doctor._id}`}
+
+>
+
+Book Appointment
+
 </Link>
 
-            </div>
-          </div>
-        </div>
-      ))}
-    </div>
-  </div>
-);
+
+
+</div>
+
+
+</div>
+
+
+))
+
 }
+
+
+</div>
+
+
+</div>
+
+
+);
+
+
+}
+
+
 export default Doctors;
