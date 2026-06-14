@@ -1,80 +1,68 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import API from "../services/api";
+import { Link } from "react-router-dom";
 
 
 function Doctors(){
 
-const [doctors,setDoctors]=useState([]);
-
-const [loading,setLoading]=useState(true);
-
-const [error,setError]=useState("");
+const [doctors,setDoctors] = useState([]);
 
 
 useEffect(()=>{
 
 API.get("/doctors")
-
-.then(res=>{
-
-setDoctors(res.data);
-
-setLoading(false);
-
-})
-
-.catch(err=>{
-
-console.log(err);
-
-setError("Failed to load doctors");
-
-setLoading(false);
-
-});
-
+.then(res=>setDoctors(res.data))
+.catch(err=>console.log(err));
 
 },[]);
 
 
 
-return(
+return (
 
-<div className="container mt-4">
+<div className="container mt-5">
 
 
-<h1 className="mb-4">
-Available Doctors
+<div className="hero mb-5">
+
+<h1>
+Find Your Doctor 🩺
 </h1>
 
-{
-loading &&
-<h3>
-Loading doctors...
-</h3>
-}
+<p>
+Book appointments with trusted doctors
+</p>
+
+</div>
 
 
-{
-error &&
-<h3 className="text-danger">
-{error}
-</h3>
-}
+
 <div className="row">
 
 
 {
 doctors.map((doctor)=>(
 
-<div
+
+<div 
 className="col-md-4 mb-4"
 key={doctor._id}
 >
 
 
-<div className="card shadow p-3">
+<div className="doctor-card">
+
+
+<div className="text-center">
+
+
+<div
+style={{
+fontSize:"60px"
+}}
+>
+👨‍⚕️
+</div>
 
 
 <h3>
@@ -82,33 +70,30 @@ key={doctor._id}
 </h3>
 
 
-<p>
-Specialization:
-<br/>
-<b>{doctor.specialization}</b>
+<p className="text-muted">
+{doctor.specialization}
 </p>
 
 
 <p>
-Experience:
-<br/>
-<b>{doctor.experience} years</b>
+📍 {doctor.location}
 </p>
-
 
 
 <Link
 
-className="btn btn-primary"
+to={`/doctors/${doctor._id}`}
 
-to={`/book/${doctor._id}`}
+className="btn btn-primary"
 
 >
 
-Book Appointment
+View Profile
 
 </Link>
 
+
+</div>
 
 
 </div>
@@ -126,7 +111,6 @@ Book Appointment
 
 
 </div>
-
 
 );
 

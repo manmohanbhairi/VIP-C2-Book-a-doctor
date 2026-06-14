@@ -1,46 +1,88 @@
-import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useEffect,useState } from "react";
+import { useParams,Link } from "react-router-dom";
 import API from "../services/api";
 
-function DoctorDetails() {
-  const { id } = useParams();
 
-  const [doctor, setDoctor] = useState(null);
+function DoctorDetails(){
 
-  useEffect(() => {
-    API.get("/doctors")
-      .then((res) => {
-        const foundDoctor = res.data.find(
-          (d) => d._id === id
-        );
+const {id}=useParams();
 
-        setDoctor(foundDoctor);
-      })
-      .catch((err) => console.log(err));
-  }, [id]);
+const [doctor,setDoctor]=useState(null);
 
-  if (!doctor) return <h2>Loading...</h2>;
 
-  return (
-    <div className="container mt-4">
-      <h1>{doctor.name}</h1>
 
-      <p>
-        Specialization:
-        {doctor.specialization}
-      </p>
+useEffect(()=>{
 
-      <p>
-        Experience:
-        {doctor.experience} Years
-      </p>
+API.get(`/doctors/${id}`)
+.then(res=>setDoctor(res.data))
+.catch(err=>console.log(err));
 
-      <p>
-        Fees:
-        ₹{doctor.fees}
-      </p>
-    </div>
-  );
+},[id]);
+
+
+
+if(!doctor)
+return <h3 className="text-center mt-5">
+Loading...
+</h3>
+
+
+
+return (
+
+<div className="container mt-5">
+
+
+<div className="card p-5">
+
+
+<div className="text-center">
+
+
+<div style={{fontSize:"80px"}}>
+👨‍⚕️
+</div>
+
+
+<h1>
+{doctor.name}
+</h1>
+
+
+<h4>
+{doctor.specialization}
+</h4>
+
+
+<p>
+{doctor.description}
+</p>
+
+
+<Link
+
+className="btn btn-success"
+
+to={`/book/${doctor._id}`}
+
+>
+
+Book Appointment
+
+</Link>
+
+
+</div>
+
+
+</div>
+
+
+</div>
+
+)
+
 }
+
 
 export default DoctorDetails;
