@@ -1,4 +1,4 @@
-import {Link} from "react-router-dom";
+import { Link } from "react-router-dom";
 
 
 function Admin(){
@@ -15,36 +15,35 @@ return (
 Admin Dashboard 🩺
 </h1>
 
+
 <p>
 Manage doctors and appointments
 </p>
 
 
+
 <div className="row mt-4">
 
 
-<div className="col-md-6">
+<div className="col-md-4">
 
 
 <div className="card p-4">
 
 
-<h3>
-👨‍⚕️ Doctors
-</h3>
-
+<h3>➕ Add Doctor</h3>
 
 <p>
-Add and manage doctors
+Create new doctor profile
 </p>
 
 
 <Link
+to="/admin/add-doctor"
 className="btn btn-primary"
-to="/admin/doctors"
 >
 
-Manage Doctors
+Add Doctor
 
 </Link>
 
@@ -55,28 +54,60 @@ Manage Doctors
 
 
 
-<div className="col-md-6">
+
+
+<div className="col-md-4">
 
 
 <div className="card p-4">
 
 
-<h3>
-📅 Appointments
-</h3>
+<h3>👨‍⚕️ Doctors</h3>
 
 
 <p>
-Approve patient appointments
+View all doctors
 </p>
 
 
 <Link
+to="/admin/doctors"
 className="btn btn-success"
-to="/admin/appointments"
 >
 
-Manage Appointments
+Doctors
+
+</Link>
+
+
+</div>
+
+</div>
+
+
+
+
+
+<div className="col-md-4">
+
+
+<div className="card p-4">
+
+
+<h3>📅 Appointments</h3>
+
+
+<p>
+Manage bookings
+</p>
+
+
+<Link
+to="/admin/appointments"
+className="btn btn-warning"
+>
+
+Appointments
 
 </Link>
 
@@ -85,6 +116,7 @@ Manage Appointments
 
 
 </div>
+
 
 
 </div>
