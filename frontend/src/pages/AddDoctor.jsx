@@ -1,87 +1,140 @@
-import { useState } from "react";
+import {useState} from "react";
 import API from "../services/api";
 
-function AddDoctor() {
-  const [form, setForm] = useState({
-    name: "",
-    specialization: "",
-    experience: "",
-    fees: "",
-  });
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+function AddDoctor(){
 
-    try {
-      const res = await API.post(
-        "/doctors",
-        form
-      );
 
-      alert(res.data.message);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+const [form,setForm]=useState({
 
-  return (
-    <div className="container mt-4">
-      <h1>Add Doctor</h1>
+name:"",
+specialization:"",
+location:"",
+description:""
 
-      <form onSubmit={handleSubmit}>
-        <input
-          placeholder="Name"
-          className="form-control mb-2"
-          onChange={(e) =>
-            setForm({
-              ...form,
-              name: e.target.value,
-            })
-          }
-        />
+});
 
-        <input
-          placeholder="Specialization"
-          className="form-control mb-2"
-          onChange={(e) =>
-            setForm({
-              ...form,
-              specialization: e.target.value,
-            })
-          }
-        />
 
-        <input
-          placeholder="Experience"
-          className="form-control mb-2"
-          onChange={(e) =>
-            setForm({
-              ...form,
-              experience: e.target.value,
-            })
-          }
-        />
+const submit=async(e)=>{
 
-        <input
-          placeholder="Fees"
-          className="form-control mb-2"
-          onChange={(e) =>
-            setForm({
-              ...form,
-              fees: e.target.value,
-            })
-          }
-        />
+e.preventDefault();
 
-        <button
-          className="btn btn-primary"
-          type="submit"
-        >
-          Add Doctor
-        </button>
-      </form>
-    </div>
-  );
+
+try{
+
+
+await API.post(
+"/doctors",
+form
+);
+
+
+alert("Doctor Added");
+
+
 }
+
+
+catch(err){
+
+alert("Failed");
+
+}
+
+};
+
+
+
+return (
+
+<div className="container mt-5">
+
+
+<div className="card p-5">
+
+
+<h2>
+Add Doctor 👨‍⚕️
+</h2>
+
+
+<form onSubmit={submit}>
+
+
+<input
+className="form-control mb-3"
+placeholder="Doctor Name"
+onChange={
+e=>setForm({
+...form,
+name:e.target.value
+})
+}
+/>
+
+
+
+<input
+className="form-control mb-3"
+placeholder="Specialization"
+onChange={
+e=>setForm({
+...form,
+specialization:e.target.value
+})
+}
+/>
+
+
+
+<input
+className="form-control mb-3"
+placeholder="Location"
+onChange={
+e=>setForm({
+...form,
+location:e.target.value
+})
+}
+/>
+
+
+
+<textarea
+
+className="form-control mb-3"
+
+placeholder="Description"
+
+onChange={
+e=>setForm({
+...form,
+description:e.target.value
+})
+}
+
+/>
+
+
+
+<button className="btn btn-primary">
+
+Add Doctor
+
+</button>
+
+
+</form>
+
+
+</div>
+
+
+</div>
+
+)
+
+}
+
 
 export default AddDoctor;

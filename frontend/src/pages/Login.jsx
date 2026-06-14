@@ -1,86 +1,171 @@
 import { useState } from "react";
 import API from "../services/api";
-import { Link, useNavigate } from "react-router-dom";
+import { Link,useNavigate } from "react-router-dom";
 
-function Login() {
-  const navigate = useNavigate();
 
-  const [form, setForm] = useState({
-    email: "",
-    password: "",
-  });
+function Login(){
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+const navigate = useNavigate();
 
-    try {
-      const res = await API.post("/auth/login", form);
 
-      localStorage.setItem("token", res.data.token);
+const [form,setForm]=useState({
+email:"",
+password:""
+});
 
-      localStorage.setItem(
-        "user",
-        JSON.stringify(res.data.user)
-      );
 
-      navigate("/dashboard");
+const handleSubmit = async(e)=>{
 
-    } catch (err) {
-  console.log("FULL ERROR:", err);
-  console.log("RESPONSE:", err.response?.data);
+e.preventDefault();
 
-  alert(
-    err.response?.data?.message ||
-    err.message ||
-    "Login Failed"
-  );
+
+try{
+
+
+const res =
+await API.post("/auth/login",form);
+
+
+localStorage.setItem(
+"token",
+res.data.token
+);
+
+
+localStorage.setItem(
+"user",
+JSON.stringify(res.data.user)
+);
+
+
+if(res.data.user?.role === "admin"){
+
+  navigate("/admin");
+
 }
-  };
+else{
 
-  return (
-    <div>
-      <h2>Login</h2>
+  navigate("/dashboard");
 
-      <form onSubmit={handleSubmit}>
-        <input
-          type="email"
-          placeholder="Email"
-          onChange={(e) =>
-            setForm({
-              ...form,
-              email: e.target.value,
-            })
-          }
-        />
-
-        <br /><br />
-
-        <input
-          type="password"
-          placeholder="Password"
-          onChange={(e) =>
-            setForm({
-              ...form,
-              password: e.target.value,
-            })
-          }
-        />
-
-        <br /><br />
-
-        <button type="submit">
-          Login
-        </button>
-      </form>
-
-      <p>
-        Don't have an account?{" "}
-        <Link to="/register">
-          Register
-        </Link>
-      </p>
-    </div>
-  );
 }
+
+}
+catch(error){
+
+alert(
+error.response?.data?.message ||
+"Login Failed"
+);
+
+}
+
+};
+
+
+
+return (
+
+<div className="container mt-5">
+
+
+<div className="row justify-content-center">
+
+
+<div className="col-md-5">
+
+
+<div className="card p-5">
+
+
+<h2 className="text-center mb-4">
+🩺 Login
+</h2>
+
+
+<form onSubmit={handleSubmit}>
+
+
+<input
+
+className="form-control mb-3"
+
+type="email"
+
+placeholder="Email"
+
+onChange={
+e=>setForm({
+...form,
+email:e.target.value
+})
+}
+
+/>
+
+
+
+<input
+
+className="form-control mb-3"
+
+type="password"
+
+placeholder="Password"
+
+onChange={
+e=>setForm({
+...form,
+password:e.target.value
+})
+}
+
+/>
+
+
+
+<button
+
+className="btn btn-primary w-100"
+
+>
+
+Login
+
+</button>
+
+
+</form>
+
+
+
+<p className="text-center mt-3">
+
+Don't have account?
+
+<Link to="/register">
+
+ Register
+
+</Link>
+
+</p>
+
+
+</div>
+
+
+</div>
+
+
+</div>
+
+
+</div>
+
+);
+
+
+}
+
 
 export default Login;

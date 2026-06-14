@@ -97,3 +97,37 @@ transform:translateY(0);
 }
 
 }
+
+
+.auth-bg{
+
+min-height:90vh;
+
+display:flex;
+
+align-items:center;
+
+background:
+linear-gradient(
+135deg,
+#eaf7ff,
+#ffffff
+);
+
+}
+
+.card{
+
+transition:.3s;
+
+}
+
+
+.card:hover{
+
+transform:translateY(-5px);
+
+box-shadow:
+0 15px 30px rgba(0,0,0,.12);
+
+}
