@@ -1,5 +1,7 @@
 const express = require("express");
 const router = express.Router();
+const authMiddleware =
+require("../middleware/authMiddleware");
 
 const {
   bookAppointment,
@@ -11,11 +13,16 @@ const {
 
 router.post("/", bookAppointment);
 
-router.get("/", getAppointments);
+router.get(
+"/",
+authMiddleware,
+getAppointments
+);
 
 router.put(
-  "/cancel/:id",
-  cancelAppointment
+"/cancel/:id",
+authMiddleware,
+cancelAppointment
 );
 
 router.put(

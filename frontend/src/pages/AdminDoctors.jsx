@@ -1,70 +1,245 @@
-import { useEffect, useState } from "react";
+import { useEffect,useState } from "react";
+import { Link } from "react-router-dom";
 import API from "../services/api";
 
-function AdminDoctors() {
 
-  const [doctors, setDoctors] =
-    useState([]);
+function AdminDoctors(){
 
-  const fetchDoctors = () => {
-    API.get("/doctors")
-  .then((res) => {
-    console.log(res.data);
-    setDoctors(res.data);
-  })
-  .catch(console.log);
-  };
 
-  useEffect(() => {
-    fetchDoctors();
-  }, []);
+const [doctors,setDoctors]=useState([]);
 
-  const deleteDoctor = async (id) => {
-    try {
-      await API.delete(
-        `/doctors/${id}`
-      );
 
-      alert(
-        "Doctor deleted successfully"
-      );
 
-      fetchDoctors();
+useEffect(()=>{
 
-    } catch (error) {
-      console.log(error);
-    }
-  };
+loadDoctors();
 
-  return (
-    <div className="container mt-4">
-      <h1>Manage Doctors</h1>
+},[]);
 
-      {doctors.map((doctor) => (
-        <div
-          key={doctor._id}
-          className="card p-3 mb-3"
-        >
-          <h3>{doctor.name}</h3>
 
-          <p>
-            {doctor.specialization}
-          </p>
 
-          <button
-            className="btn btn-danger"
-            onClick={() =>
-              deleteDoctor(
-                doctor._id
-              )
-            }
-          >
-            Delete
-          </button>
-        </div>
-      ))}
-    </div>
-  );
+const loadDoctors=async()=>{
+
+try{
+
+
+const res =
+await API.get("/doctors");
+
+
+setDoctors(res.data);
+
+
 }
+catch(error){
+
+console.log(error);
+
+}
+
+};
+
+
+
+const deleteDoctor=async(id)=>{
+
+
+const confirmDelete =
+window.confirm(
+"Delete this doctor?"
+);
+
+
+if(!confirmDelete)
+return;
+
+
+
+try{
+
+
+await API.delete(
+`/doctors/${id}`
+);
+
+
+
+alert(
+"Doctor deleted"
+);
+
+
+
+loadDoctors();
+
+
+}
+catch(error){
+
+alert(
+"Delete failed"
+);
+
+}
+
+
+};
+
+
+
+
+
+return (
+
+<div className="container mt-5">
+
+
+<div className="d-flex justify-content-between align-items-center">
+
+
+<h1>
+Doctors Management 👨‍⚕️
+</h1>
+
+
+<Link
+
+to="/admin/add-doctor"
+
+className="btn btn-primary"
+
+>
+
+➕ Add Doctor
+
+</Link>
+
+
+</div>
+
+
+
+
+<div className="row mt-4">
+
+
+{
+doctors.map((doctor)=>(
+
+
+<div
+
+className="col-md-4 mb-4"
+
+key={doctor._id}
+
+>
+
+
+<div className="doctor-card">
+
+
+
+<div className="text-center">
+
+
+<div
+style={{
+fontSize:"70px"
+}}
+>
+
+👨‍⚕️
+
+</div>
+
+
+
+<h3>
+
+{doctor.name}
+
+</h3>
+
+
+
+<p>
+
+{doctor.specialization}
+
+</p>
+
+
+
+<p>
+
+📍 {doctor.location}
+
+</p>
+
+
+
+<div className="d-flex gap-2 justify-content-center">
+
+
+
+<Link
+
+to={`/doctors/${doctor._id}`}
+
+className="btn btn-success"
+
+>
+
+View
+
+</Link>
+
+
+
+
+<button
+
+className="btn btn-danger"
+
+onClick={
+()=>deleteDoctor(doctor._id)
+}
+
+>
+
+Delete
+
+</button>
+
+
+
+</div>
+
+
+
+</div>
+
+
+</div>
+
+
+</div>
+
+
+))
+
+}
+
+
+</div>
+
+
+</div>
+
+)
+
+}
+
 
 export default AdminDoctors;

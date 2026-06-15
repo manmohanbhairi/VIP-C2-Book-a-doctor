@@ -14,6 +14,7 @@ import AddDoctor from "./pages/AddDoctor";
 import AdminDoctors from "./pages/AdminDoctors";
 import AdminAppointments from "./pages/AdminAppointments";
 import AdminRoute from "./components/AdminRoute";
+import Footer from "./components/Footer";
 
 function App() {
   return (
@@ -103,6 +104,7 @@ element={
   }
 />
       </Routes>
+      <Footer/>
     </BrowserRouter>
   );
 }

@@ -58,27 +58,28 @@ try{
 
 
 const appointments =
-await Appointment.find()
-.populate("patientId")
-.populate("doctorId");
+await Appointment.find({
+    patientId:req.user.id
+})
+.populate("doctorId")
+.populate("patientId");
 
 
 res.json(appointments);
 
 
 }
+
 catch(error){
 
 res.status(500).json({
-
 message:error.message
-
 });
 
 }
 
-};
 
+};
 
 
 // Cancel appointment
@@ -86,23 +87,44 @@ message:error.message
 exports.cancelAppointment =
 async(req,res)=>{
 
+
 try{
 
 
 const appointment =
-await Appointment.findByIdAndUpdate(
+await Appointment.findById(
+req.params.id
+);
 
-req.params.id,
 
-{
-status:"Cancelled"
-},
+if(!appointment){
 
-{
-new:true
+return res.status(404).json({
+message:"Appointment not found"
+});
+
 }
 
-);
+
+
+if(
+appointment.patientId.toString()
+!== req.user.id
+){
+
+return res.status(403).json({
+message:"Not allowed"
+});
+
+}
+
+
+
+appointment.status="Cancelled";
+
+
+await appointment.save();
+
 
 
 res.json({
@@ -114,20 +136,18 @@ appointment
 });
 
 
+
 }
 catch(error){
 
 res.status(500).json({
-
 message:error.message
-
 });
 
 }
 
+
 };
-
-
 
 // Approve appointment
 

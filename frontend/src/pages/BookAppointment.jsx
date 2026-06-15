@@ -1,86 +1,208 @@
 import { useState } from "react";
 import { useParams } from "react-router-dom";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+
 import API from "../services/api";
 
 
 function BookAppointment(){
 
-  const { doctorId } = useParams();
+const {doctorId}=useParams();
 
-const user = JSON.parse(
-  localStorage.getItem("user")
+
+const [date,setDate]=useState(null);
+
+const [time,setTime]=useState("");
+
+
+
+const times=[
+
+"09:00 AM",
+"10:00 AM",
+"11:00 AM",
+"02:00 PM",
+"03:00 PM",
+"05:00 PM"
+
+];
+
+
+
+const bookAppointment = async()=>{
+
+
+try{
+
+
+const user =
+JSON.parse(
+localStorage.getItem("user")
 );
 
-const patientId = user?._id || user?.id;
 
 
-  const [date,setDate] = useState("");
+await API.post("/appointments",{
 
 
-  const handleSubmit = async(e)=>{
+patientId:user.id || user._id,
 
-    e.preventDefault();
+doctorId,
+
+appointmentDate:
+`${date.toISOString().split("T")[0]} ${time}`
 
 
-    try{
+});
 
-      await API.post(
-"/appointments",
-{
- patientId: patientId,
- doctorId: doctorId,
- appointmentDate: date
+
+
+alert("Appointment booked successfully");
+
+
 }
+
+catch(error){
+
+console.log(error);
+
+alert(
+"Booking failed"
 );
 
-
-      alert("Appointment booked successfully");
-
-
-    }
-    catch(error){
-
-      console.log(error.response);
-
-      alert(
-        error.response?.data?.message ||
-        "Booking Failed"
-      );
-
-    }
-
-  };
+}
 
 
-  return(
-
-    <div>
-
-      <h1>Book Appointment</h1>
+};
 
 
-      <form onSubmit={handleSubmit}>
+
+return (
+
+<div className="container mt-5">
 
 
-        <input
-          type="date"
-          onChange={
-            (e)=>setDate(e.target.value)
-          }
-        />
+<div className="row justify-content-center">
 
 
-        <button>
-          Book
-        </button>
+<div className="col-md-7">
 
 
-      </form>
+<div className="card p-5">
 
 
-    </div>
+<h2 className="text-center mb-4">
 
-  );
+📅 Book Appointment
+
+</h2>
+
+
+
+<h5>
+Select Appointment Date
+</h5>
+
+
+<DatePicker
+
+className="form-control"
+
+selected={date}
+
+onChange={(d)=>setDate(d)}
+
+minDate={new Date()}
+
+placeholderText="Choose date"
+
+/>
+
+
+
+<br/>
+
+
+
+<h5>
+Select Time
+</h5>
+
+
+
+<div className="row">
+
+
+{
+times.map((t)=>(
+
+
+<div className="col-4 mb-3" key={t}>
+
+
+<button
+
+className={
+time===t
+?
+"btn btn-success w-100"
+:
+"btn btn-outline-primary w-100"
+}
+
+
+onClick={()=>setTime(t)}
+
+>
+
+{t}
+
+</button>
+
+
+</div>
+
+
+))
+
+}
+
+
+</div>
+
+
+
+<button
+
+className="btn btn-primary w-100 mt-4"
+
+disabled={!date || !time}
+
+onClick={bookAppointment}
+
+>
+
+Confirm Appointment
+
+</button>
+
+
+
+
+</div>
+
+
+</div>
+
+
+</div>
+
+
+</div>
+
+
+)
 
 }
 
