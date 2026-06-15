@@ -38,7 +38,7 @@ JSON.stringify(res.data.user)
 );
 
 
-if(res.data.user?.role === "admin"){
+if(res.data.user.role === "admin"){
 
   navigate("/admin");
 
