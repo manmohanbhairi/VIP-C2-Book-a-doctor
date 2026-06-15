@@ -19,7 +19,7 @@ await Appointment.create({
 patientId,
 doctorId,
 appointmentDate,
-status:"Pending"
+status:"pending"
 
 });
 
