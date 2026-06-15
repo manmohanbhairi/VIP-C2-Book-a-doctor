@@ -8,6 +8,7 @@ import API from "../services/api";
 
 function BookAppointment(){
 
+
 const {doctorId}=useParams();
 
 
@@ -30,6 +31,8 @@ const times=[
 
 
 
+
+
 const bookAppointment = async()=>{
 
 
@@ -43,42 +46,81 @@ localStorage.getItem("user")
 
 
 
-await API.post("/appointments",{
+const appointmentData={
 
+patientId:user._id || user.id,
 
-patientId:user.id || user._id,
-
-doctorId,
+doctorId:doctorId,
 
 appointmentDate:
 `${date.toISOString().split("T")[0]} ${time}`
 
-
-});
-
+};
 
 
-alert("Appointment booked successfully");
+
+console.log(
+"BOOKING DATA:",
+appointmentData
+);
+
+
+
+const res =
+await API.post(
+"/appointments",
+appointmentData
+);
+
+
+
+console.log(
+"BOOK RESPONSE:",
+res.data
+);
+
+
+
+alert(
+"Appointment booked successfully"
+);
+
+
+
+setDate(null);
+setTime("");
+
 
 
 }
 
+
 catch(error){
 
-console.log(error);
+
+console.log(
+error.response?.data || error
+);
+
 
 alert(
 "Booking failed"
 );
 
+
 }
+
 
 
 };
 
 
 
+
+
+
 return (
+
 
 <div className="container mt-5">
 
@@ -100,24 +142,35 @@ return (
 
 
 
+
 <h5>
+
 Select Appointment Date
+
 </h5>
+
 
 
 <DatePicker
 
+
 className="form-control"
+
 
 selected={date}
 
+
 onChange={(d)=>setDate(d)}
+
 
 minDate={new Date()}
 
+
 placeholderText="Choose date"
 
+
 />
+
 
 
 
@@ -125,9 +178,14 @@ placeholderText="Choose date"
 
 
 
+
 <h5>
+
 Select Time
+
 </h5>
+
+
 
 
 
@@ -143,25 +201,37 @@ times.map((t)=>(
 
 <button
 
+
 className={
+
 time===t
+
 ?
+
 "btn btn-success w-100"
+
 :
+
 "btn btn-outline-primary w-100"
+
 }
 
 
 onClick={()=>setTime(t)}
 
+
 >
 
+
 {t}
+
 
 </button>
 
 
+
 </div>
+
 
 
 ))
@@ -173,17 +243,25 @@ onClick={()=>setTime(t)}
 
 
 
+
+
 <button
+
 
 className="btn btn-primary w-100 mt-4"
 
+
 disabled={!date || !time}
+
 
 onClick={bookAppointment}
 
+
 >
 
+
 Confirm Appointment
+
 
 </button>
 
@@ -203,6 +281,7 @@ Confirm Appointment
 
 
 )
+
 
 }
 

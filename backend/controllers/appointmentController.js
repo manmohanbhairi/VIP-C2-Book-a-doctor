@@ -2,7 +2,7 @@ const Appointment = require("../models/Appointment");
 
 
 // Book appointment
-exports.bookAppointment = async (req,res)=>{
+exports.bookAppointment = async(req,res)=>{
 
 try{
 
@@ -19,7 +19,7 @@ await Appointment.create({
 patientId,
 doctorId,
 appointmentDate,
-status:"Booked"
+status:"Pending"
 
 });
 
@@ -27,7 +27,6 @@ status:"Booked"
 res.status(201).json({
 
 message:"Appointment booked successfully",
-
 appointment
 
 });
@@ -39,9 +38,7 @@ catch(error){
 console.log(error);
 
 res.status(500).json({
-
 message:error.message
-
 });
 
 }
@@ -49,6 +46,9 @@ message:error.message
 };
 
 
+
+
+// Get appointments
 
 // Get appointments
 
@@ -58,9 +58,7 @@ try{
 
 
 const appointments =
-await Appointment.find({
-    patientId:req.user.id
-})
+await Appointment.find()
 .populate("doctorId")
 .populate("patientId");
 
@@ -69,7 +67,6 @@ res.json(appointments);
 
 
 }
-
 catch(error){
 
 res.status(500).json({
@@ -81,11 +78,9 @@ message:error.message
 
 };
 
-
 // Cancel appointment
 
-exports.cancelAppointment =
-async(req,res)=>{
+exports.cancelAppointment = async(req,res)=>{
 
 
 try{
@@ -95,6 +90,7 @@ const appointment =
 await Appointment.findById(
 req.params.id
 );
+
 
 
 if(!appointment){
@@ -108,8 +104,8 @@ message:"Appointment not found"
 
 
 if(
-appointment.patientId.toString()
-!== req.user.id
+req.user.role!=="admin" &&
+appointment.patientId.toString() !== req.user.id
 ){
 
 return res.status(403).json({
@@ -130,11 +126,9 @@ await appointment.save();
 res.json({
 
 message:"Appointment cancelled",
-
 appointment
 
 });
-
 
 
 }
@@ -149,12 +143,26 @@ message:error.message
 
 };
 
+
+
+
+
 // Approve appointment
 
-exports.approveAppointment =
-async(req,res)=>{
+exports.approveAppointment = async(req,res)=>{
+
 
 try{
+
+
+if(req.user.role!=="admin"){
+
+return res.status(403).json({
+message:"Admin only"
+});
+
+}
+
 
 
 const appointment =
@@ -173,10 +181,10 @@ new:true
 );
 
 
+
 res.json({
 
 message:"Appointment approved",
-
 appointment
 
 });
@@ -186,11 +194,10 @@ appointment
 catch(error){
 
 res.status(500).json({
-
 message:error.message
-
 });
 
 }
+
 
 };
