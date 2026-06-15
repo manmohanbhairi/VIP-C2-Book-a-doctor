@@ -50,34 +50,29 @@ message:error.message
 
 // Get appointments
 
-exports.getAppointments = async(req,res)=>{
+exports.getAppointments = async (req, res) => {
+  try {
+    let query = {};
 
-try{
+    // If user is NOT admin → show only his appointments
+    if (req.user.role !== "admin") {
+      query.patientId = req.user.id;
+    }
 
+    const appointments = await Appointment.find(query)
+      .populate("doctorId")
+      .populate("patientId");
 
-const appointments =
-await Appointment.find({
-    patientId:req.user.id
-})
-.populate("doctorId")
-.populate("patientId");
-
-
-res.json(appointments);
-
-
-}
-
-catch(error){
-
-res.status(500).json({
-message:error.message
-});
-
-}
-
-
+    res.json(appointments);
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
 };
+
+
+
 
 // Cancel appointment
 
