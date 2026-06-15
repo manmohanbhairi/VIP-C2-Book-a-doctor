@@ -50,15 +50,15 @@ message:error.message
 
 // Get appointments
 
-// Get appointments
-
 exports.getAppointments = async(req,res)=>{
 
 try{
 
 
 const appointments =
-await Appointment.find()
+await Appointment.find({
+    patientId:req.user.id
+})
 .populate("doctorId")
 .populate("patientId");
 
@@ -67,6 +67,7 @@ res.json(appointments);
 
 
 }
+
 catch(error){
 
 res.status(500).json({
