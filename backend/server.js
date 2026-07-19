@@ -47,3 +47,7 @@ app.get(
 app.use("/api/doctors", doctorRoutes);
 
 app.use("/api/appointments", appointmentRoutes);
+
+const reviewRoutes = require("./routes/reviewRoutes");
+
+app.use("/api/reviews", reviewRoutes);

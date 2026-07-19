@@ -15,6 +15,7 @@ import AdminDoctors from "./pages/AdminDoctors";
 import AdminAppointments from "./pages/AdminAppointments";
 import AdminRoute from "./components/AdminRoute";
 import Footer from "./components/Footer";
+import DoctorProfile from "./pages/DoctorProfile";
 
 function App() {
   return (
@@ -60,7 +61,7 @@ function App() {
   }
 />
 <Route
-  path="/doctors/:id"
+  path="/doctors-details/:id"
   element={<DoctorDetails />}
 />
 <Route
@@ -103,6 +104,10 @@ element={
     
   }
 />
+<Route
+  path="/doctors/:doctorId"
+  element={<DoctorProfile />}
+/>  
       </Routes>
       <Footer/>
     </BrowserRouter>

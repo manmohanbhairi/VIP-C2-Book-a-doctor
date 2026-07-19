@@ -12,14 +12,51 @@ const doctorSchema = new mongoose.Schema(
       required: true,
     },
 
-    experience: {
-      type: Number,
-      required: true,
+    location: {
+      type: String,
+      default: "Hyderabad",
     },
 
-    fees: {
+    qualification: {
+      type: String,
+      default: "MBBS, MD",
+    },
+
+    hospital: {
+      type: String,
+      default: "Apollo Hospital",
+    },
+
+    phone: {
+      type: String,
+      default: "+91 9876543210",
+    },
+
+    about: {
+      type: String,
+      default:
+        "Experienced doctor dedicated to providing quality healthcare.",
+    },
+
+    experience: {
+      type: String,
+      default: "5 Years",
+    },
+
+    fee: {
       type: Number,
-      required: true,
+      default: 500,
+    },
+
+    rating: {
+      type: Number,
+      default: 4.8,
+    },
+
+    image: {
+      type: String,
+      default:
+        "https://cdn-icons-png.flaticon.com/512/2785/2785482.png",
     },
 
     available: {

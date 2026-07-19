@@ -645,9 +645,41 @@ margin-bottom:20px;
 
 
 
+.doctor-img{
+
+width:120px;
+
+height:120px;
+
+border-radius:50%;
+
+object-fit:cover;
+
+border:5px solid #fff;
+
+box-shadow:0 8px 20px rgba(0,0,0,.15);
+
+}
+
 .doctor-card{
 
-margin-bottom:20px;
+background:white;
+
+border-radius:20px;
+
+padding:25px;
+
+box-shadow:0 12px 25px rgba(0,0,0,.08);
+
+transition:.3s;
+
+}
+
+.doctor-card:hover{
+
+transform:translateY(-8px);
+
+box-shadow:0 20px 40px rgba(13,110,253,.15);
 
 }
 
@@ -668,5 +700,202 @@ font-size:28px;
 
 }
 
+
+}
+
+.search-box {
+  border-radius: 30px;
+  padding: 12px 20px;
+  border: 2px solid #dbeafe;
+  box-shadow: 0 8px 20px rgba(0, 123, 255, 0.08);
+  transition: 0.3s;
+}
+
+.search-box:focus {
+  border-color: #0d6efd;
+  box-shadow: 0 0 12px rgba(13, 110, 253, 0.25);
+}
+
+.filter-box{
+
+border-radius:30px;
+
+padding:12px;
+
+border:2px solid #dbeafe;
+
+box-shadow:0 8px 20px rgba(0,123,255,.08);
+
+transition:.3s;
+
+}
+
+.filter-box:focus{
+
+border-color:#0d6efd;
+
+box-shadow:0 0 12px rgba(13,110,253,.25);
+
+}
+
+.doctor-profile-card{
+
+background:white;
+
+border-radius:25px;
+
+padding:40px;
+
+box-shadow:0 15px 40px rgba(0,0,0,.08);
+
+animation:show .5s ease;
+
+}
+
+.doctor-profile-image{
+
+width:220px;
+
+height:220px;
+
+border-radius:50%;
+
+object-fit:cover;
+
+border:8px solid #eaf4ff;
+
+box-shadow:0 10px 25px rgba(0,0,0,.12);
+
+}
+
+.doctor-profile-card h2{
+
+font-weight:700;
+
+}
+
+.doctor-profile-card p{
+
+font-size:17px;
+
+margin-bottom:12px;
+
+}
+
+.doctor-profile-card hr{
+
+margin:25px 0;
+
+}
+
+.doctor-profile-card .btn{
+
+padding:12px 35px;
+
+font-size:18px;
+
+border-radius:30px;
+
+}
+
+.review-card{
+
+background:white;
+
+padding:30px;
+
+border-radius:20px;
+
+box-shadow:0 10px 25px rgba(0,0,0,.08);
+
+margin-bottom:40px;
+
+}
+
+.review-item{
+
+padding:15px;
+
+border-radius:15px;
+
+background:#f8fbff;
+
+margin-top:15px;
+
+}
+
+.review-item h5{
+
+margin-bottom:5px;
+
+}
+
+.review-card textarea{
+
+border-radius:15px;
+
+}
+
+.review-card select{
+
+border-radius:12px;
+
+}
+
+.doctor-card{
+
+background:white;
+
+padding:25px;
+
+border-radius:20px;
+
+box-shadow:0 10px 30px rgba(0,0,0,.08);
+
+transition:.3s;
+
+}
+
+.doctor-card:hover{
+
+transform:translateY(-10px);
+
+box-shadow:0 20px 40px rgba(0,0,0,.15);
+
+}
+
+.doctor-img{
+
+width:140px;
+
+height:140px;
+
+border-radius:50%;
+
+object-fit:cover;
+
+border:5px solid #eaf4ff;
+
+}
+
+.search-box{
+
+height:50px;
+
+border-radius:25px;
+
+padding-left:20px;
+
+}
+
+.hero{
+
+padding:30px;
+
+background:linear-gradient(135deg,#007bff,#5bc0de);
+
+color:white;
+
+border-radius:20px;
 
 }
