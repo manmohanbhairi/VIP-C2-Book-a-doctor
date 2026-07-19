@@ -1,10 +1,10 @@
 const Review = require("../models/Review");
 const Appointment = require("../models/Appointment");
 
+// Add Review
 exports.addReview = async (req, res) => {
   try {
 
-    // Check appointment
     const appointment = await Appointment.findOne({
       doctorId: req.body.doctorId,
       patientId: req.user.id,
@@ -17,7 +17,6 @@ exports.addReview = async (req, res) => {
       });
     }
 
-    // Check duplicate review
     const alreadyReviewed = await Review.findOne({
       doctorId: req.body.doctorId,
       patientId: req.user.id,
@@ -37,6 +36,44 @@ exports.addReview = async (req, res) => {
     });
 
     res.status(201).json(review);
+
+  } catch (err) {
+
+    res.status(500).json({
+      message: err.message,
+    });
+
+  }
+};
+
+// Get Reviews
+exports.getReviews = async (req, res) => {
+  try {
+
+    const reviews = await Review.find({
+      doctorId: req.params.doctorId,
+    }).populate("patientId", "name");
+
+    res.json(reviews);
+
+  } catch (err) {
+
+    res.status(500).json({
+      message: err.message,
+    });
+
+  }
+};
+
+// Delete Review
+exports.deleteReview = async (req, res) => {
+  try {
+
+    await Review.findByIdAndDelete(req.params.id);
+
+    res.json({
+      message: "Review deleted successfully"
+    });
 
   } catch (err) {
 
