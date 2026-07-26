@@ -51,7 +51,32 @@ const userSchema = new mongoose.Schema(
 
     default: "user"
 
-  }
+  },  
+
+  phone: {
+    type: String,
+    default: "",
+},
+
+age: {
+    type: Number,
+    default: 0,
+},
+
+gender: {
+    type: String,
+    default: "",
+},
+
+address: {
+    type: String,
+    default: "",
+},
+
+profileImage: {
+    type: String,
+    default: "https://cdn-icons-png.flaticon.com/512/3135/3135715.png",
+}
 
 
 },

@@ -51,3 +51,12 @@ app.use("/api/appointments", appointmentRoutes);
 const reviewRoutes = require("./routes/reviewRoutes");
 
 app.use("/api/reviews", reviewRoutes);
+
+const adminRoutes = require("./routes/adminRoutes");
+app.use("/api/admin", adminRoutes);
+
+const favoriteRoutes = require("./routes/favoriteRoutes");
+app.use("/api/favorites", favoriteRoutes);
+
+const profileRoutes = require("./routes/profileRoutes");
+app.use("/api/profile", profileRoutes);

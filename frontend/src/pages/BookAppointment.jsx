@@ -1,289 +1,291 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-
 import API from "../services/api";
 
+function BookAppointment() {
 
-function BookAppointment(){
+  const { doctorId } = useParams();
+
+  const [date, setDate] = useState(null);
+  const [time, setTime] = useState("");
+
+  const [bookedSlots, setBookedSlots] = useState([]);
+
+  const times = [
+    "09:00 AM",
+    "10:00 AM",
+    "11:00 AM",
+    "02:00 PM",
+    "03:00 PM",
+    "05:00 PM"
+  ];
+
+  // -------------------------
+  // Load already booked slots
+  // -------------------------
+
+  useEffect(() => {
+
+    if (!date) return;
+
+    const fetchBookedSlots = async () => {
+
+      try {
+
+        const selectedDate =
+          date.toISOString().split("T")[0];
+
+        const res = await API.get(
+          `/appointments/booked/${doctorId}/${selectedDate}`
+        );
+
+        setBookedSlots(res.data);
+
+      } catch (err) {
+
+        console.log(err);
+
+      }
+
+    };
+
+    fetchBookedSlots();
+
+  }, [date, doctorId]);
+
+  // -------------------------
+  // Check if slot is expired
+  // -------------------------
+
+  const isPastTime = (slot) => {
+
+    if (!date) return false;
+
+    const today = new Date();
+
+    const selected = new Date(date);
+
+    if (
+      selected.toDateString() !==
+      today.toDateString()
+    ) {
+      return false;
+    }
+
+    let [timePart, period] = slot.split(" ");
+
+    let [hour, minute] = timePart.split(":");
+
+    hour = parseInt(hour);
+
+    if (period === "PM" && hour !== 12)
+      hour += 12;
+
+    if (period === "AM" && hour === 12)
+      hour = 0;
+
+    const slotTime = new Date();
+
+    slotTime.setHours(hour);
+    slotTime.setMinutes(parseInt(minute));
+    slotTime.setSeconds(0);
+
+    return slotTime <= new Date();
+
+  };
+
+  // -------------------------
+  // Book Appointment
+  // -------------------------
+
+  const bookAppointment = async () => {
+
+    try {
+
+      const user =
+        JSON.parse(localStorage.getItem("user"));
+
+      const appointmentData = {
+
+        patientId: user._id || user.id,
+
+        doctorId,
+
+        appointmentDate:
+          `${date.toISOString().split("T")[0]} ${time}`
+
+      };
+
+      await API.post(
+        "/appointments",
+        appointmentData
+      );
+
+      alert("Appointment Booked Successfully");
+
+      setDate(null);
+      setTime("");
+
+    }
+
+    catch (err) {
+
+      alert(
+        err.response?.data?.message ||
+        "Booking Failed"
+      );
+
+    }
+
+  };
 
 
-const {doctorId}=useParams();
 
+  return (
 
-const [date,setDate]=useState(null);
+    <div className="container mt-5">
 
-const [time,setTime]=useState("");
+      <div className="row justify-content-center">
 
+        <div className="col-md-7">
 
+          <div className="card p-5">
 
-const times=[
+            <h2 className="text-center mb-4">
+              📅 Book Appointment
+            </h2>
 
-"09:00 AM",
-"10:00 AM",
-"11:00 AM",
-"02:00 PM",
-"03:00 PM",
-"05:00 PM"
+            <h5>Select Appointment Date</h5>
 
-];
+            <DatePicker
 
+              className="form-control"
 
+              selected={date}
 
+              onChange={(d)=>setDate(d)}
 
+              minDate={new Date()}
 
-const bookAppointment = async()=>{
+              placeholderText="Choose Date"
 
+            />
 
-try{
+            <br/>
 
+            <h5>Select Time</h5>
 
-const user =
-JSON.parse(
-localStorage.getItem("user")
-);
+            <div className="row">
 
+              {
 
+                times.map((slot)=>{
 
-const appointmentData={
+                  const booked =
+                    bookedSlots.includes(slot);
 
-patientId:user._id || user.id,
+                  const expired =
+                    isPastTime(slot);
 
-doctorId:doctorId,
+                  return(
 
-appointmentDate:
-`${date.toISOString().split("T")[0]} ${time}`
+                    <div
+                      className="col-4 mb-3"
+                      key={slot}
+                    >
 
-};
+                      <button
 
+                        disabled={
+                          booked || expired
+                        }
 
+                        className={
 
-console.log(
-"BOOKING DATA:",
-appointmentData
-);
+                          booked || expired
 
+                          ?
 
+                          "btn btn-secondary w-100"
 
-const res =
-await API.post(
-"/appointments",
-appointmentData
-);
+                          :
 
+                          time===slot
 
+                          ?
 
-console.log(
-"BOOK RESPONSE:",
-res.data
-);
+                          "btn btn-success w-100"
 
+                          :
 
+                          "btn btn-outline-primary w-100"
 
-alert(
-"Appointment booked successfully"
-);
+                        }
 
+                        onClick={()=>setTime(slot)}
 
+                      >
 
-setDate(null);
-setTime("");
+                        {
 
+                          booked
 
+                          ?
+
+                          "Booked"
+
+                          :
+
+                          expired
+
+                          ?
+
+                          "Expired"
+
+                          :
+
+                          slot
+
+                        }
+
+                      </button>
+
+                    </div>
+
+                  );
+
+                })
+
+              }
+
+            </div>
+
+            <button
+
+              className="btn btn-primary w-100 mt-4"
+
+              disabled={!date || !time}
+
+              onClick={bookAppointment}
+
+            >
+
+              Confirm Appointment
+
+            </button>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  );
 
 }
-
-
-catch(error){
-
-
-console.log(
-error.response?.data || error
-);
-
-
-alert(
-"Booking failed"
-);
-
-
-}
-
-
-
-};
-
-
-
-
-
-
-return (
-
-
-<div className="container mt-5">
-
-
-<div className="row justify-content-center">
-
-
-<div className="col-md-7">
-
-
-<div className="card p-5">
-
-
-<h2 className="text-center mb-4">
-
-📅 Book Appointment
-
-</h2>
-
-
-
-
-<h5>
-
-Select Appointment Date
-
-</h5>
-
-
-
-<DatePicker
-
-
-className="form-control"
-
-
-selected={date}
-
-
-onChange={(d)=>setDate(d)}
-
-
-minDate={new Date()}
-
-
-placeholderText="Choose date"
-
-
-/>
-
-
-
-
-<br/>
-
-
-
-
-<h5>
-
-Select Time
-
-</h5>
-
-
-
-
-
-<div className="row">
-
-
-{
-times.map((t)=>(
-
-
-<div className="col-4 mb-3" key={t}>
-
-
-<button
-
-
-className={
-
-time===t
-
-?
-
-"btn btn-success w-100"
-
-:
-
-"btn btn-outline-primary w-100"
-
-}
-
-
-onClick={()=>setTime(t)}
-
-
->
-
-
-{t}
-
-
-</button>
-
-
-
-</div>
-
-
-
-))
-
-}
-
-
-</div>
-
-
-
-
-
-<button
-
-
-className="btn btn-primary w-100 mt-4"
-
-
-disabled={!date || !time}
-
-
-onClick={bookAppointment}
-
-
->
-
-
-Confirm Appointment
-
-
-</button>
-
-
-
-
-</div>
-
-
-</div>
-
-
-</div>
-
-
-</div>
-
-
-)
-
-
-}
-
 
 export default BookAppointment;

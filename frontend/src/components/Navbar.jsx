@@ -1,148 +1,95 @@
 import { Link, useNavigate } from "react-router-dom";
 
+function Navbar() {
 
-function Navbar(){
+  const navigate = useNavigate();
 
+  const user = JSON.parse(localStorage.getItem("user"));
 
-const navigate = useNavigate();
+  const logout = () => {
 
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
 
-const user =
-JSON.parse(
-localStorage.getItem("user")
-);
+    navigate("/");
 
+  };
 
+  return (
 
-const logout=()=>{
+    <nav className="navbar navbar-expand-lg bg-white shadow-sm px-4">
 
+      <Link
+        className="navbar-brand fw-bold text-primary"
+        to={user ? "/dashboard" : "/"}
+      >
+        🩺 Book Doctor
+      </Link>
 
-localStorage.removeItem("token");
+      <div className="ms-auto d-flex align-items-center gap-2">
 
-localStorage.removeItem("user");
+        {user && user.role !== "admin" && (
+          <>
 
+            <Link
+              className="btn btn-outline-primary"
+              to="/doctors"
+            >
+              Doctors
+            </Link>
 
-navigate("/");
+            <Link
+              className="btn btn-outline-success"
+              to="/appointments"
+            >
+              Appointments
+            </Link>
 
+            <Link
+              className="btn btn-outline-info"
+              to="/profile"
+            >
+              👤 Profile
+            </Link>
 
-};
+            <Link
+              className="btn btn-outline-danger"
+              to="/favorites"
+            >
+              ❤️ Favorites
+            </Link>
 
+          </>
+        )}
 
+        {user && user.role === "admin" && (
 
-return (
+          <Link
+            className="btn btn-outline-warning"
+            to="/admin"
+          >
+            🛠 Admin
+          </Link>
 
-<nav className="navbar navbar-expand-lg bg-white shadow-sm px-4">
+        )}
 
+        {user && (
 
-<Link
+          <button
+            className="btn btn-danger"
+            onClick={logout}
+          >
+            Logout
+          </button>
 
-className="navbar-brand fw-bold text-primary"
+        )}
 
-to={user?"/dashboard":"/"}
+      </div>
 
->
+    </nav>
 
-🩺 Book Doctor
-
-</Link>
-
-
-
-
-<div className="ms-auto d-flex align-items-center gap-2">
-
-
-{
-user && user.role !== "admin" &&
-
-<>
-
-
-<Link
-
-className="btn btn-outline-primary"
-
-to="/doctors"
-
->
-
-Doctors
-
-</Link>
-
-
-
-<Link
-
-className="btn btn-outline-success"
-
-to="/appointments"
-
->
-
-Appointments
-
-</Link>
-
-
-</>
-
-}
-
-
-
-
-{
-user && user.role==="admin" &&
-
-
-<Link
-
-className="btn btn-outline-danger"
-
-to="/admin"
-
->
-
-Admin
-
-</Link>
-
+  );
 
 }
-
-
-
-
-
-{
-user &&
-
-<button
-
-className="btn btn-danger"
-
-onClick={logout}
-
->
-
-Logout
-
-</button>
-
-}
-
-
-</div>
-
-
-
-</nav>
-
-)
-
-
-}
-
 
 export default Navbar;

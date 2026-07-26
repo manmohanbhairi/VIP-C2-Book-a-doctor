@@ -22,6 +22,18 @@ function DoctorProfile() {
     );
   }
 
+
+  const addFavorite = async () => {
+  try {
+    await API.post("/favorites", {
+      doctorId: doctor._id,
+    });
+
+    alert("Doctor added to favorites ❤️");
+  } catch (err) {
+    alert(err.response?.data?.message || "Something went wrong");
+  }
+};
   return (
     <div className="container mt-5">
 
@@ -90,7 +102,46 @@ function DoctorProfile() {
             <p>
               📞 <b>Phone:</b> {doctor.phone}
             </p>
+                
+                <hr />
 
+<p>
+  📅 <b>Available Days:</b>
+</p>
+
+<div className="mb-3">
+
+  {doctor.workingDays?.map((day) => (
+
+    <span
+      key={day}
+      className="badge bg-primary me-2 mb-2"
+    >
+      {day}
+    </span>
+
+  ))}
+
+</div>
+
+<p>
+  🕒 <b>Available Time Slots:</b>
+</p>
+
+<div>
+
+  {doctor.availableSlots?.map((slot) => (
+
+    <span
+      key={slot}
+      className="badge bg-success me-2 mb-2"
+    >
+      {slot}
+    </span>
+
+  ))}
+
+</div>
           </div>
 
         </div>
@@ -112,11 +163,19 @@ function DoctorProfile() {
             📅 Book Appointment
           </Link>
 
+                <button
+  className="btn btn-danger me-3"
+  onClick={addFavorite}
+>
+  ❤️ Add to Favorites
+</button>
         </div>
 
       </div>
 <DoctorReviews doctorId={doctor._id} />
     </div>
+
+    
   );
 }
 

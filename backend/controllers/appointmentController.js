@@ -1,199 +1,288 @@
 const Appointment = require("../models/Appointment");
+const Doctor = require("../models/Doctor");
+// ===============================
+// Book Appointment
+// ===============================
+exports.bookAppointment = async (req, res) => {
+  try {
 
+    const {
+      patientId,
+      doctorId,
+      appointmentDate,
+    } = req.body;
 
-// Book appointment
-exports.bookAppointment = async(req,res)=>{
+    // Prevent duplicate booking
+    const existing = await Appointment.findOne({
+      doctorId,
+      appointmentDate,
+    });
 
-try{
+    if (existing) {
+      return res.status(400).json({
+        message: "This time slot is already booked.",
+      });
+    }
 
-const {
- patientId,
- doctorId,
- appointmentDate
-}=req.body;
+    const appointment = await Appointment.create({
+      patientId,
+      doctorId,
+      appointmentDate,
+      status: "Pending",
+    });
 
+    res.status(201).json({
+      message: "Appointment booked successfully",
+      appointment,
+    });
 
-const appointment =
-await Appointment.create({
+  } catch (err) {
 
-patientId,
-doctorId,
-appointmentDate,
-status:"Booked"
+    res.status(500).json({
+      message: err.message,
+    });
 
-});
+  }
+};
 
+// ===============================
+// User Appointments
+// ===============================
+exports.getAppointments = async (req, res) => {
 
-res.status(201).json({
+  try {
 
-message:"Appointment booked successfully",
-appointment
+    const appointments = await Appointment.find({
+      patientId: req.user.id,
+    }).populate("doctorId");
 
-});
+    res.json(appointments);
 
+  } catch (err) {
 
-}
-catch(error){
+    res.status(500).json({
+      message: err.message,
+    });
 
-console.log(error);
-
-res.status(500).json({
-message:error.message
-});
-
-}
+  }
 
 };
 
+// ===============================
+// Admin - All Appointments
+// ===============================
+exports.getAllAppointments = async (req, res) => {
 
-
-
-// Get appointments
-
-exports.getAppointments = async (req, res) => {
   try {
-    let query = {};
 
-    // If user is NOT admin → show only his appointments
-    if (req.user.role !== "admin") {
-      query.patientId = req.user.id;
-    }
-
-    const appointments = await Appointment.find(query)
+    const appointments = await Appointment.find()
       .populate("doctorId")
       .populate("patientId");
 
     res.json(appointments);
-  } catch (error) {
+
+  } catch (err) {
+
     res.status(500).json({
-      message: error.message,
+      message: err.message,
     });
+
+  }
+
+};
+
+// ===============================
+// Approve Appointment
+// ===============================
+exports.approveAppointment = async (req, res) => {
+
+  try {
+
+    const appointment =
+      await Appointment.findByIdAndUpdate(
+
+        req.params.id,
+
+        {
+          status: "Approved",
+        },
+
+        {
+          new: true,
+        }
+
+      );
+
+    res.json(appointment);
+
+  } catch (err) {
+
+    res.status(500).json({
+      message: err.message,
+    });
+
+  }
+
+};
+
+// ===============================
+// Cancel Appointment
+// ===============================
+exports.cancelAppointment = async (req, res) => {
+
+  try {
+
+    const appointment =
+      await Appointment.findByIdAndUpdate(
+
+        req.params.id,
+
+        {
+          status: "Cancelled",
+        },
+
+        {
+          new: true,
+        }
+
+      );
+
+    res.json(appointment);
+
+  } catch (err) {
+
+    res.status(500).json({
+      message: err.message,
+    });
+
+  }
+
+};
+
+// ===============================
+// Get Booked Time Slots
+// ===============================
+exports.getBookedSlots = async (req, res) => {
+
+  try {
+
+    const { doctorId, date } = req.params;
+
+    const appointments = await Appointment.find({
+
+      doctorId,
+
+      appointmentDate: {
+        $regex: `^${date}`,
+      },
+
+      status: {
+        $ne: "Cancelled",
+      },
+
+    });
+
+    const bookedSlots = appointments.map((item) => {
+
+      const parts = item.appointmentDate.split(" ");
+
+      return `${parts[1]} ${parts[2]}`;
+
+    });
+
+    res.json(bookedSlots);
+
+  } catch (err) {
+
+    res.status(500).json({
+      message: err.message,
+    });
+
+  }
+
+
+  exports.getAvailableSlots = async (req, res) => {
+  try {
+    const { doctorId, date } = req.query;
+
+    const doctor = await Doctor.findById(doctorId);
+
+    if (!doctor) {
+      return res.status(404).json({
+        message: "Doctor not found",
+      });
+    }
+
+    // Get selected day name
+    const dayName = new Date(date).toLocaleDateString("en-US", {
+      weekday: "long",
+    });
+
+    // Check if doctor works on this day
+    if (!doctor.availableDays.includes(dayName)) {
+      return res.json({
+        available: false,
+        message: `Doctor is not available on ${dayName}`,
+        slots: [],
+      });
+    }
+
+    // Start with doctor's own slots
+    let availableSlots = [...doctor.availableSlots];
+
+    // Remove booked slots
+    const booked = await Appointment.find({
+      doctorId,
+      appointmentDate: date,
+      status: { $ne: "Cancelled" },
+    });
+
+    const bookedSlots = booked.map((a) => a.appointmentTime);
+
+    availableSlots = availableSlots.filter(
+      (slot) => !bookedSlots.includes(slot)
+    );
+
+    // Remove expired slots if date is today
+    const today = new Date();
+    const selectedDate = new Date(date);
+
+    if (today.toDateString() === selectedDate.toDateString()) {
+
+      const currentMinutes =
+        today.getHours() * 60 + today.getMinutes();
+
+      availableSlots = availableSlots.filter((slot) => {
+
+        const [time, modifier] = slot.split(" ");
+
+        let [hours, minutes] = time.split(":").map(Number);
+
+        if (modifier === "PM" && hours !== 12) {
+          hours += 12;
+        }
+
+        if (modifier === "AM" && hours === 12) {
+          hours = 0;
+        }
+
+        const slotMinutes = hours * 60 + minutes;
+
+        return slotMinutes > currentMinutes;
+      });
+    }
+
+    res.json({
+      available: true,
+      slots: availableSlots,
+    });
+
+  } catch (err) {
+
+    res.status(500).json({
+      message: err.message,
+    });
+
   }
 };
-
-
-
-
-// Cancel appointment
-
-exports.cancelAppointment = async(req,res)=>{
-
-
-try{
-
-
-const appointment =
-await Appointment.findById(
-req.params.id
-);
-
-
-
-if(!appointment){
-
-return res.status(404).json({
-message:"Appointment not found"
-});
-
-}
-
-
-
-if(
-req.user.role!=="admin" &&
-appointment.patientId.toString() !== req.user.id
-){
-
-return res.status(403).json({
-message:"Not allowed"
-});
-
-}
-
-
-
-appointment.status="Cancelled";
-
-
-await appointment.save();
-
-
-
-res.json({
-
-message:"Appointment cancelled",
-appointment
-
-});
-
-
-}
-catch(error){
-
-res.status(500).json({
-message:error.message
-});
-
-}
-
-
-};
-
-
-
-
-
-// Approve appointment
-
-exports.approveAppointment = async(req,res)=>{
-
-
-try{
-
-
-if(req.user.role!=="admin"){
-
-return res.status(403).json({
-message:"Admin only"
-});
-
-}
-
-
-
-const appointment =
-await Appointment.findByIdAndUpdate(
-
-req.params.id,
-
-{
-status:"Approved"
-},
-
-{
-new:true
-}
-
-);
-
-
-
-res.json({
-
-message:"Appointment approved",
-appointment
-
-});
-
-
-}
-catch(error){
-
-res.status(500).json({
-message:error.message
-});
-
-}
-
-
 };

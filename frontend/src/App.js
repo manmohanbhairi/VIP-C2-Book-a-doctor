@@ -16,6 +16,8 @@ import AdminAppointments from "./pages/AdminAppointments";
 import AdminRoute from "./components/AdminRoute";
 import Footer from "./components/Footer";
 import DoctorProfile from "./pages/DoctorProfile";
+import Favorites from "./pages/Favorites";
+import Profile from "./pages/Profile";
 
 function App() {
   return (
@@ -108,6 +110,23 @@ element={
   path="/doctors/:doctorId"
   element={<DoctorProfile />}
 />  
+<Route
+  path="/favorites"
+  element={
+    <ProtectedRoute>
+      <Favorites />
+    </ProtectedRoute>
+  }
+/>
+
+<Route
+  path="/profile"
+  element={
+    <ProtectedRoute>
+      <Profile />
+    </ProtectedRoute>
+  }
+/>
       </Routes>
       <Footer/>
     </BrowserRouter>
