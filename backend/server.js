@@ -10,10 +10,16 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+if (!process.env.MONGO_URI) {
+  console.error("MONGO_URI is not configured");
+}
+
 mongoose
-  .connect(process.env.MONGO_URI)
+  .connect(process.env.MONGO_URI, {
+    serverSelectionTimeoutMS: 30000
+  })
   .then(() => console.log("MongoDB Connected"))
-  .catch((err) => console.log(err));
+  .catch((err) => console.error("MongoDB connection failed:", err.message));
 
 app.get("/", (req, res) => {
   res.send("Book A Doctor API Running");

@@ -6,6 +6,7 @@ const API = axios.create({
     (process.env.NODE_ENV === "production"
       ? "/api"
       : "http://localhost:5000/api"),
+  timeout: 60000,
 });
 
 API.interceptors.request.use((config) => {
