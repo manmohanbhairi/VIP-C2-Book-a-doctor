@@ -23,7 +23,7 @@ const loadAppointments = async()=>{
 try{
 
 const res =
-await API.get("/appointments");
+await API.get("/appointments/all");
 
 
 setAppointments(res.data);

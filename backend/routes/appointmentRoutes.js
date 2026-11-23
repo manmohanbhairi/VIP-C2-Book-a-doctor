@@ -5,6 +5,16 @@ const authMiddleware = require("../middleware/authMiddleware");
 
 const appointmentController = require("../controllers/appointmentController");
 
+const adminOnly = (req, res, next) => {
+  if (req.user.role !== "admin") {
+    return res.status(403).json({
+      message: "Admin access required",
+    });
+  }
+
+  next();
+};
+
 // =======================
 // Book Appointment
 // =======================
@@ -29,6 +39,7 @@ router.get(
 router.get(
   "/all",
   authMiddleware,
+  adminOnly,
   appointmentController.getAllAppointments
 );
 
